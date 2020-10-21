@@ -533,6 +533,7 @@ class SpaceInvaders(object):
                 sys.exit()
 
     def main(self):
+        global ENEMY_POSITION
         while True:
             if self.mainScreen:
                 SCREEN.blit(self.background, (0, 0))
