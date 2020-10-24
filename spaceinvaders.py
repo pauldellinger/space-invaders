@@ -167,7 +167,6 @@ class EnemiesGroup(sprite.Group):
 
     def random_bottom(self):
         col = np.random.choice(self._aliveColumns)
-        print(col, end = '')
         col_enemies = (self.enemies[row - 1][col]
                        for row in range(self.rows, 0, -1))
         return next((en for en in col_enemies if en is not None), None)
@@ -593,7 +592,6 @@ class SpaceInvaders(object):
                 # Reset enemy starting position
                 ENEMY_POSITION = ENEMY_DEFAULT_POSITION
                 self.create_game_over(currentTime)
-                print("Score: " + str(self.score))
 
                 return self.score
 

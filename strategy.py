@@ -2,7 +2,7 @@ from pygame import *
 from random import randint
 import random
 
-MUTATE_PROBABILITY = 0 # (out of 100)
+MUTATE_PROBABILITY = 2 # (out of 100)
 NUM_KEYS = 7000
 KEYBOARD_LENGTH = 323
 
@@ -27,7 +27,6 @@ class Strategy(object):
             return tuple(ans)
         
         temp = self.keys[self.index]
-        print(temp, end='')
         self.index += 1
 
         if(temp == 0):

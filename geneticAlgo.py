@@ -4,7 +4,7 @@ from random import randint
 from math import ceil
 
 NUM_GENERATIONS = 10
-NUM_STRATEGIES = 1
+NUM_STRATEGIES = 20
 
 class geneticAlgorithm(object):
     def __init__(self):
@@ -44,7 +44,7 @@ class geneticAlgorithm(object):
             # Mutate resulting strategies
             for strategy in self.strategies:
                 strategy.reset()
-                # strategy.mutate()
+                strategy.mutate()
 
 if __name__ == '__main__':
     simulation = geneticAlgorithm()
