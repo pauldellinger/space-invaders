@@ -6,7 +6,7 @@
 from pygame import *
 import sys
 from os.path import abspath, dirname
-from random import choice
+import numpy as np
 from strategy import Strategy
 
 BASE_PATH = abspath(dirname(__file__))
@@ -166,7 +166,8 @@ class EnemiesGroup(sprite.Group):
                        for row in range(self.rows))
 
     def random_bottom(self):
-        col = choice(self._aliveColumns)
+        col = np.random.choice(self._aliveColumns)
+        print(col, end = '')
         col_enemies = (self.enemies[row - 1][col]
                        for row in range(self.rows, 0, -1))
         return next((en for en in col_enemies if en is not None), None)
@@ -329,6 +330,7 @@ class SpaceInvaders(object):
         #   ALSA lib pcm.c:7963:(snd_pcm_recover) underrun occurred
         init()
         global SCREEN, ENEMY_POSITION
+        np.random.seed(0)
         self.strategy = strategy
         self.clock = time.Clock()
         self.caption = display.set_caption('Space Invaders')
@@ -352,9 +354,10 @@ class SpaceInvaders(object):
         self.livesText = Text(FONT, 20, 'Lives ', WHITE, 640, 5)
 
         self.life1 = Life(715, 3)
-        self.life2 = Life(742, 3)
-        self.life3 = Life(769, 3)
-        self.livesGroup = sprite.Group(self.life1, self.life2, self.life3)
+        # self.life2 = Life(742, 3)
+        # self.life3 = Life(769, 3)
+        # self.livesGroup = sprite.Group(self.life1, self.life2, self.life3)
+        self.livesGroup = sprite.Group(self.life1)
 
     def reset(self, score):
         self.player = Ship()
@@ -441,7 +444,7 @@ class SpaceInvaders(object):
                   2: 20,
                   3: 10,
                   4: 10,
-                  5: choice([50, 100, 150, 300])
+                  5: 150
                   }
 
         score = scores[row]
@@ -481,15 +484,8 @@ class SpaceInvaders(object):
 
         for player in sprite.groupcollide(self.playerGroup, self.enemyBullets,
                                           True, True).keys():
-            if self.life3.alive():
-                self.life3.kill()
-            elif self.life2.alive():
-                self.life2.kill()
-            elif self.life1.alive():
-                self.life1.kill()
-            else:
-                self.gameOver = True
-                self.startGame = False
+            self.gameOver = True
+            self.startGame = False
             ShipExplosion(player, self.explosionsGroup)
             self.makeNewShip = True
             self.shipTimer = time.get_ticks()
@@ -547,13 +543,11 @@ class SpaceInvaders(object):
                 for e in event.get():
                     if self.should_exit(e):
                         sys.exit()
-                    # if e.type == KEYUP:
-                        # Only create blockers on a new game, not a new round
                 self.allBlockers = sprite.Group(self.make_blockers(0),
                                                 self.make_blockers(1),
                                                 self.make_blockers(2),
                                                 self.make_blockers(3))
-                self.livesGroup.add(self.life1, self.life2, self.life3)
+                self.livesGroup.add(self.life1)
                 self.reset(0)
                 self.startGame = True
                 self.mainScreen = False
