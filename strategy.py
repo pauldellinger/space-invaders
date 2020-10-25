@@ -3,6 +3,8 @@ from random import randint
 import random
 
 MUTATE_PROBABILITY = 2 # (out of 100)
+
+# Number of moves that the spaceship makes
 NUM_KEYS = 7000
 KEYBOARD_LENGTH = 323
 
@@ -20,6 +22,7 @@ class Strategy(object):
     def reset(self):
         self.index = 0
     
+    # Get the next move for the space ship
     def next_key(self):
         ans = [False] * KEYBOARD_LENGTH
         if(self.index == len(self.keys)):
@@ -42,6 +45,7 @@ class Strategy(object):
         else:
             return tuple(ans)
     
+
     def mutate(self):
         for i in range(0, len(self.keys)):
             if(randint(1, 100) <= MUTATE_PROBABILITY):
@@ -49,6 +53,7 @@ class Strategy(object):
                 while(self.keys[i] == old):
                     self.keys[i] = randint(0, 3)
     
+    # Take from each parent with 0.5 probability
     def breed(self, other):
         newKeys = []
         for i in range(0, NUM_KEYS):
