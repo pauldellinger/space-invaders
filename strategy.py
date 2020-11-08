@@ -4,7 +4,7 @@ import random
 
 MUTATE_PROBABILITY = 2 # (out of 100)
 NUM_KEYS = 7000
-KEYBOARD_LENGTH = 323
+KEYBOARD_LENGTH =1073741903 
 
 class Strategy(object):
     def __init__(self, keys = None):
@@ -31,12 +31,15 @@ class Strategy(object):
 
         if(temp == 0):
             self.index += 1
+            print(K_LEFT)
             ans[K_LEFT] = True
             return tuple(ans)
         elif(temp == 1):
+            print(K_RIGHT)
             ans[K_RIGHT] = True
             return tuple(ans)
         elif(temp == 2):
+            print(K_SPACE)
             ans[K_SPACE] = True
             return tuple(ans)
         else:
