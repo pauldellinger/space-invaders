@@ -1,7 +1,8 @@
 from strategy import Strategy
-from spaceinvaders import SpaceInvaders
 from random import randint
 from math import ceil
+import gym
+import numpy as np
 
 NUM_GENERATIONS = 10
 NUM_STRATEGIES = 20
@@ -11,6 +12,18 @@ class geneticAlgorithm(object):
         self.strategies = []
         for i in range(0, NUM_STRATEGIES):
             self.strategies.append(Strategy())
+        self.env = gym.make('SpaceInvaders-v0')
+        self.env.reset()
+
+    def evaluateScore(self, strategy):
+        observation = np.array(self.env.reset())
+        score = 0
+        while True:
+            self.env.render()
+            observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
+            score += reward
+            if(done):
+                return score
     
     def startSimulation(self):
         for i in range(0, NUM_GENERATIONS):
@@ -18,8 +31,8 @@ class geneticAlgorithm(object):
             scores = []
             sumScores = 0
             for strategy in self.strategies:
-                game = SpaceInvaders(strategy)
-                score = game.main()
+                score = self.evaluateScore(strategy)
+                print("Score: " + str(score))
                 sumScores += score
                 scores.append([score, strategy])
             # Sort by descending score
@@ -43,7 +56,6 @@ class geneticAlgorithm(object):
             self.strategies.extend(breededStrategies)
             # Mutate resulting strategies
             for strategy in self.strategies:
-                strategy.reset()
                 strategy.mutate()
 
 if __name__ == '__main__':

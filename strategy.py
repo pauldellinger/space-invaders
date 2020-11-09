@@ -1,64 +1,62 @@
 from pygame import *
 from random import randint
 import random
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
 
-MUTATE_PROBABILITY = 2 # (out of 100)
-NUM_KEYS = 7000
-KEYBOARD_LENGTH =1073741903 
+MUTATE_PROBABILITY = 3 # (out of 100)
+NUM_PIXELS = 7896
+NUM_MOVES = 4
 
 class Strategy(object):
-    def __init__(self, keys = None):
-        ### 0 is left, 1 is right, 2 is space, 3 is nothing
-        if(keys is None):
-            self.keys = []
-            for i in range(0, NUM_KEYS):
-                self.keys.append(randint(0, 3))
-        else:
-            self.keys = keys
-        self.index = 0
+    def __init__(self, w0 = None, b0 = None):
+        # Initialize weights and bias for layer one (normal distribution in [-1, 1))
+        if(w0 is None and b0 is None):
+            self.w0 = 2 * np.random.rand(NUM_PIXELS, NUM_MOVES) - 1
+            self.b0 = 2 * np.random.rand() - 1
+        else: 
+            self.w0 = w0
+            self.b0 = b0
     
-    def reset(self):
-        self.index = 0
-    
-    def next_key(self):
-        ans = [False] * KEYBOARD_LENGTH
-        if(self.index == len(self.keys)):
-            ### Do nothing
-            return tuple(ans)
-        
-        temp = self.keys[self.index]
-        self.index += 1
+    # Convert image to black and white and reduce size to make computation faster
+    def preprocessImage(self, pixelInput):
+        observation = cv2.cvtColor(cv2.resize(pixelInput, (84, 110)), cv2.COLOR_BGR2GRAY)
+        observation = observation[16:110,:]
+        ret, observation = cv2.threshold(observation,1,255,cv2.THRESH_BINARY)
+        observation = observation.flatten()
+        return np.where(observation == 0, observation, 1)
 
-        if(temp == 0):
-            self.index += 1
-            print(K_LEFT)
-            ans[K_LEFT] = True
-            return tuple(ans)
-        elif(temp == 1):
-            print(K_RIGHT)
-            ans[K_RIGHT] = True
-            return tuple(ans)
-        elif(temp == 2):
-            print(K_SPACE)
-            ans[K_SPACE] = True
-            return tuple(ans)
-        else:
-            return tuple(ans)
+    def sigmoid(self, x):
+        return 1.0/(1.0 + np.exp(-x))
     
+    def calculateMove(self, pixelInput):
+        pixelInput = self.preprocessImage(pixelInput)
+        output = pixelInput.dot(self.w0) + self.b0
+        output = self.sigmoid(output)
+        return np.argmax(output)
+
     def mutate(self):
-        for i in range(0, len(self.keys)):
-            if(randint(1, 100) <= MUTATE_PROBABILITY):
-                old = self.keys[i]
-                while(self.keys[i] == old):
-                    self.keys[i] = randint(0, 3)
+        for i in range(0, NUM_PIXELS):
+            for j in range(0, NUM_MOVES):
+                if(randint(1, 100) <= MUTATE_PROBABILITY):
+                    self.w0[i][j] += 2 * np.random.rand() - 1
+        if(randint(1, 100) <= MUTATE_PROBABILITY):
+            self.b0 += 2 * np.random.rand() - 1
     
     def breed(self, other):
-        newKeys = []
-        for i in range(0, NUM_KEYS):
-            if(randint(1, 2) == 1):
-                newKeys.append(self.keys[i])
-            else:
-                newKeys.append(other.keys[i])
-        return Strategy(keys = newKeys)
+        newWeights = np.empty([NUM_PIXELS, NUM_MOVES])
+        newBias = 0
+        for i in range(0, NUM_PIXELS):
+            for j in range(0, NUM_MOVES):
+                if(randint(1, 2) == 1):
+                    newWeights[i][j] = self.w0[i][j]
+                else:
+                    newWeights[i][j] = other.w0[i][j]
+        if(randint(1, 2) == 1):
+            newBias = self.b0
+        else:
+            newBias = other.b0
+        return Strategy(newWeights, newBias)
 
     
