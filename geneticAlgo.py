@@ -3,17 +3,24 @@ from random import randint
 from math import ceil
 import gym
 import numpy as np
-
-NUM_GENERATIONS = 50
-NUM_STRATEGIES = 20
+from datetime import datetime
+import os
 
 class geneticAlgorithm(object):
-    def __init__(self):
+    def __init__(self, 
+                 NUM_GENERATIONS=50,
+                 NUM_STRATEGIES=20,
+                 SELECTIVITY = 0.25
+                 ):
+        self.NUM_GENERATIONS = NUM_GENERATIONS
+        self.NUM_STRATEGIES = NUM_STRATEGIES
+        self.SELECTIVITY = SELECTIVITY
         self.strategies = []
         for i in range(0, NUM_STRATEGIES):
             self.strategies.append(Strategy())
         self.env = gym.make('SpaceInvaders-v0')
         self.env.reset()
+        self.start_time = datetime.now()
 
     def evaluateScore(self, strategy):
         observation = np.array(self.env.reset())
@@ -25,7 +32,8 @@ class geneticAlgorithm(object):
                 return score
     
     def startSimulation(self):
-        for i in range(1, NUM_GENERATIONS):
+        results = []
+        for i in range(1, self.NUM_GENERATIONS):
             print("GENERATION: " + str(i))
             scores = []
             sumScores = 0
@@ -34,17 +42,18 @@ class geneticAlgorithm(object):
                 sumScores += score
                 scores.append([score, strategy])
             # Sort by descending score
+            results.append(scores)
             scores = sorted(scores, key = lambda x: -1 * x[0])
             print("Max: " + str(scores[0][0]))
-            print("Average: " + str(sumScores / NUM_STRATEGIES))
+            print("Average: " + str(sumScores / self.NUM_STRATEGIES))
             topStrategies = []
             breededStrategies = []
             # Get 75 percentile of strategies
-            for i in range(0, ceil(NUM_STRATEGIES / 4)):
+            for i in range(0, ceil(self.NUM_STRATEGIES * self.SELECTIVITY)):
                 topStrategies.append(scores[i][1])
             # Breed the top strategies
             # Don't want to lose our top strategies...so only mutate breeded ones
-            while len(breededStrategies) + len(topStrategies) < NUM_STRATEGIES:
+            while len(breededStrategies) + len(topStrategies) < self.NUM_STRATEGIES:
                 index1 = randint(0, len(topStrategies))
                 index2 = index1
                 while(index1 == index2):
@@ -58,10 +67,29 @@ class geneticAlgorithm(object):
             # # Mutate resulting strategies
             # for strategy in self.strategies:
             #     strategy.mutate()
+        return results
+    def export_results(self, results):
+        now = self.start_time.strftime("%Y%m%d-%H%M%S")
+        for gen, generation in enumerate(results):
+            gen = str(gen)
+            path = os.path.join('strategies', now)
+            os.mkdir(path)
+            for (score, strat) in generation:
+                score = str(int(score))
+
+                strat.export(score, gen, now)
+                """ 
+                Can load results like this:
+                loaded = Strategy.load_strategy(path + "/" + gen + '-' + score + '.p')
+                """
+
 
 if __name__ == '__main__':
-    simulation = geneticAlgorithm()
-    simulation.startSimulation()
+    simulation = geneticAlgorithm(2, 10)
+    results = simulation.startSimulation()
+    simulation.export_results(results)
+    
+
 
 
     
