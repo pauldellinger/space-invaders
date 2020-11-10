@@ -4,8 +4,8 @@ from math import ceil
 import gym
 import numpy as np
 
-NUM_GENERATIONS = 80
-NUM_STRATEGIES = 30
+NUM_GENERATIONS = 50
+NUM_STRATEGIES = 20
 
 class geneticAlgorithm(object):
     def __init__(self):
@@ -19,7 +19,6 @@ class geneticAlgorithm(object):
         observation = np.array(self.env.reset())
         score = 0
         while True:
-            # self.env.render()
             observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
             score += reward
             if(done):
@@ -44,6 +43,7 @@ class geneticAlgorithm(object):
             for i in range(0, ceil(NUM_STRATEGIES / 4)):
                 topStrategies.append(scores[i][1])
             # Breed the top strategies
+            # Don't want to lose our top strategies...so only mutate breeded ones
             while len(breededStrategies) + len(topStrategies) < NUM_STRATEGIES:
                 index1 = randint(0, len(topStrategies))
                 index2 = index1
@@ -52,12 +52,16 @@ class geneticAlgorithm(object):
                 breededStrategies.append(scores[index1][1].breed(scores[index2][1]))
             self.strategies.clear()
             self.strategies.extend(topStrategies)
-            self.strategies.extend(breededStrategies)
-            # Mutate resulting strategies
-            for strategy in self.strategies:
+            for strategy in breededStrategies:
                 strategy.mutate()
+            self.strategies.extend(breededStrategies)
+            # # Mutate resulting strategies
+            # for strategy in self.strategies:
+            #     strategy.mutate()
 
 if __name__ == '__main__':
     simulation = geneticAlgorithm()
     simulation.startSimulation()
 
+
+    
