@@ -49,14 +49,9 @@ class Strategy(object):
         newBias = 0
         for i in range(0, NUM_PIXELS):
             for j in range(0, NUM_MOVES):
-                if(randint(1, 2) == 1):
-                    newWeights[i][j] = self.w0[i][j]
-                else:
-                    newWeights[i][j] = other.w0[i][j]
-        if(randint(1, 2) == 1):
-            newBias = self.b0
-        else:
-            newBias = other.b0
+                    newWeights[i][j] = (self.w0[i][j] + other.w0[i][j]) / 2.0
+
+        newBias = (self.b0 + other.b0) / 2.0
         return Strategy(newWeights, newBias)
 
     
