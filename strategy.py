@@ -1,4 +1,3 @@
-from pygame import *
 from random import randint
 import random
 import numpy as np
@@ -15,7 +14,7 @@ class Strategy(object):
     def __init__(self, 
                  w0 = None, 
                  b0 = None,
-                 MUTATE_PROBABILITY=0.-1,
+                 MUTATE_PROBABILITY=0.01,
                  MUTATION_FACTOR=2
                  ):
         # Initialize weights and bias for layer one (normal distribution in [-1, 1))
