@@ -28,6 +28,8 @@ class geneticAlgorithm(object):
         self.env = gym.make(GAME)
         self.env.reset()
         self.start_time = datetime.now()
+        self.folder = os.path.join('strategies', self.start_time.strftime("%Y%m%d-%H%M%S"))
+        os.mkdir(self.folder)
     
     def evaluateScore(self, strategy):
         scores = []
@@ -77,9 +79,8 @@ class geneticAlgorithm(object):
                 strategy.mutate()
             self.strategies.extend(breededStrategies)
             
-            # store intermediate results
-            pickle.dump(self, open(os.path.join("strategies", self.start_time.strftime("%Y%m%d-%H%M%S") + '-intermediate-' + str(i)+  '-results.p'), "wb"))
         print("Simulation time: ", datetime.now() - self.start_time, "\n")
+        
         return results
     
     # Run many sims.
@@ -97,9 +98,15 @@ class geneticAlgorithm(object):
             
             # Run.
             results = self.startSimulation()
-            
+
+            # Save intermediate results.
+            path = os.path.join(self.folder, str(specs))
+            os.mkdir(path)
+            sim_results_path = os.path.join(path, str(specs)+  '-sim-results' )
+            os.mkdir(sim_results_path)
+            self.export_results(results, sim_results_path)
+
             # Stats.
-            #self.export_results(results)
             stats = fetch_simulation_stats(results)
             
             # Append.
@@ -129,7 +136,6 @@ class geneticAlgorithm(object):
             }
             plt = make_plot(d['title'], d['xLabel'], d['yLabel'])
             compiled_results = list(zip(d['Xs'], d['Ys'], d['legendLabels']))
-                #compiled_results = (d['Xs'][i], d['Ys'][i], label)
             add_lines(plt, compiled_results)
             save_plot(plt, stat + variable + self.start_time.strftime("%Y%m%d-%H%M%S"))
             
@@ -137,17 +143,17 @@ class geneticAlgorithm(object):
         # Ret.
         return allSimStats
     
-    def export_results(self, results):
-        now = self.start_time.strftime("%Y%m%d-%H%M%S")
-        pickle.dump(self, open(os.path.join("strategies", now + '-results.p'), "wb"))
+    def export_results(self, results, path):
+        now = datetime.now().strftime("%Y%m%d-%H%M%S")
+        pickle.dump(self, open(os.path.join(path, now + '-results.p'), "wb"))
         for gen, generation in enumerate(results):
             gen = str(gen)
-            path = os.path.join('strategies', now)
-            os.mkdir(path)
+            gen_path = os.path.join(path, gen)
+            os.mkdir(gen_path)
             for (score, strat) in generation:
                 score = str(int(score))
 
-                strat.export(score, gen, now)
+                strat.export(score, gen_path)
                 """ 
                 Can load results like this:
                 loaded = Strategy.load_strategy(path + "/" + gen + '-' + score + '.p')
@@ -155,32 +161,30 @@ class geneticAlgorithm(object):
 
 
 if __name__ == '__main__':
-    simulation = geneticAlgorithm(3, 2)
+    simulation = geneticAlgorithm(10, 2)
 
     ####################
     # Single Mode.
     ####################
     # results = simulation.startSimulation()
-    # simulation.export_results(results)
     
 
     ####################
     #### Many Mode.
     ####################
     paramList = [
-        [0.01, 0.25]
-        # [0.02, 0.25],
-        # [0.03, 0.25],
-        # [0.04, 0.25],
-        # [0.05, 0.25]
-        # [0.06, 0.25],
-        # [0.07, 0.25],
-        # [0.08, 0.25],
-        # [0.09, 0.25],
-        # [0.10, 0.25],
-        # [0.11, 0.25]
+        [0.01, 0.05],
+        [0.01, 0.10],
+        # [0.01, 0.15],
+        # [0.01, 0.20],
+        # [0.01, 0.25],
+        # [0.01, 0.30],
+        # [0.01, 0.35],
+        # [0.01, 0.40],
+        # [0.01, 0.45],
+        # [0.01, 0.5]
     ]
-    simulation.run_simulations_with_params(paramList, variable="Mutability")
+    simulation.run_simulations_with_params(paramList, variable="Selectivity")
     
 
     

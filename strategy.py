@@ -71,9 +71,8 @@ class Strategy(object):
         # newBias = (self.b0 + other.b0) / 2.0
         return Strategy(newWeights, newBias)
 
-    def export(self, score, gen, start):
-        score, gen = str(score), str(gen)
-        pickle.dump(self, open(os.path.join("strategies", start, gen + '-' + score + '.p'), "wb"))
+    def export(self, score, path):
+        pickle.dump(self, open(os.path.join(path, score + '.p'), "wb"))
     
 
     @staticmethod

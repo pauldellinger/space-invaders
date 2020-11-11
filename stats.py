@@ -52,22 +52,6 @@ def fetch_simulation_stats(generations):
     return allStats
 
 
-
-
-
-
-        
-def generation_stats(strategies):
-    """
-    Type [(score, strategy)]
-    Return average, 
-    max, 
-    standard deviation, 
-    varaiance of populations
-
-    """
-    pass
-
 def make_plot(title, xaxis, yaxis):
     """
     plt = stats.make_plot(asdf)
