@@ -101,7 +101,7 @@ class geneticAlgorithm(object):
 
 if __name__ == '__main__':
 
-    simulation = geneticAlgorithm(2, 10, SELECTIVITY=0.5, MUTATION_RATE=0.02)
+    simulation = geneticAlgorithm(100, 50)
     results = simulation.startSimulation()
     simulation.export_results(results)
     
