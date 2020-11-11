@@ -5,31 +5,42 @@ import gym
 import numpy as np
 from datetime import datetime
 import os
+import pickle
 
 class geneticAlgorithm(object):
     def __init__(self, 
                  NUM_GENERATIONS=50,
                  NUM_STRATEGIES=20,
-                 SELECTIVITY = 0.25
+                 SELECTIVITY = 0.25,
+                 EPISODES=3, # TODO: some statistics on what's a good value
+                 GAME='SpaceInvaders-v0',
+                 MUTATION_RATE=0.01
                  ):
         self.NUM_GENERATIONS = NUM_GENERATIONS
         self.NUM_STRATEGIES = NUM_STRATEGIES
         self.SELECTIVITY = SELECTIVITY
+        self.EPISODES = EPISODES
+        self.MUTATION_RATE = MUTATION_RATE
         self.strategies = []
         for i in range(0, NUM_STRATEGIES):
-            self.strategies.append(Strategy())
-        self.env = gym.make('SpaceInvaders-v0')
+            self.strategies.append(Strategy(MUTATE_PROBABILITY=MUTATION_RATE))
+        self.env = gym.make(GAME)
         self.env.reset()
         self.start_time = datetime.now()
 
     def evaluateScore(self, strategy):
-        observation = np.array(self.env.reset())
-        score = 0
-        while True:
-            observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
-            score += reward
-            if(done):
-                return score
+        scores = []
+        for _ in range(self.EPISODES):
+
+            observation = np.array(self.env.reset())
+            score = 0
+            while True:
+                observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
+                score += reward
+                if(done):
+                    scores.append(score)
+                    break
+        return (sum(scores)/len(scores))
     
     def startSimulation(self):
         results = []
@@ -64,12 +75,16 @@ class geneticAlgorithm(object):
             for strategy in breededStrategies:
                 strategy.mutate()
             self.strategies.extend(breededStrategies)
-            # # Mutate resulting strategies
-            # for strategy in self.strategies:
-            #     strategy.mutate()
+            
+            # store intermediate results
+            pickle.dump(self, open(os.path.join("strategies", self.start_time.strftime("%Y%m%d-%H%M%S") + '-intermediate-' + str(i)+  '-results.p'), "wb"))
+        print("Simulation time: ", datetime.now() - self.start_time, "\n")
         return results
+
+
     def export_results(self, results):
         now = self.start_time.strftime("%Y%m%d-%H%M%S")
+        pickle.dump(self, open(os.path.join("strategies", now + '-results.p'), "wb"))
         for gen, generation in enumerate(results):
             gen = str(gen)
             path = os.path.join('strategies', now)
@@ -85,7 +100,8 @@ class geneticAlgorithm(object):
 
 
 if __name__ == '__main__':
-    simulation = geneticAlgorithm(2, 10)
+
+    simulation = geneticAlgorithm(2, 10, SELECTIVITY=0.5, MUTATION_RATE=0.02)
     results = simulation.startSimulation()
     simulation.export_results(results)
     

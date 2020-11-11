@@ -9,18 +9,47 @@ def save_plot(chart, path):
 def save_array(arr, path):
     np.savetxt("results/" + path + '.csv', arr, delimiter=",")
 
-def generation_stats(strategy):
-        
+def generation_stats(strategies):
+    """
+    Type [(score, strategy)]
+    Return average, 
+    max, 
+    standard deviation, 
+    varaiance of populations
+
+    """
+    pass
+
+def make_plot(title, xaxis, yaxis):
+    """
+    plt = stats.make_plot(asdf)
+    plt.addlines(asdf)
+    stats.save_plot(plt, path)
+    """
+    figure(1, figsize=(16, 9))
+    plt.title(title)
+    plt.xlabel(xaxis)
+    plt.ylabel(yaxis)
+    return plt
+
+
+
+def add_lines(plt, compiled_results):
+    """
+    Compiled results is tuple with
+    [([Xs], [Ys], label)]
+    """
+    for x, y, label in compiled_results:
+        plt.plot(x, y,  alpha=0.9, label=label)
+
+    plt.legend(loc=2, ncol=len(compiled_results))
+    return plt
+
 if __name__ == '__main__':
-    # figure(1, figsize=(6, 6))
-    # ax = axes([0.1, 0.1, 0.8, 0.8])
 
-    # labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
-    # fracs = [15, 30, 45, 10]
-
-    # explode = (0, 0.05, 0, 0)
-    # pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-    # title('Raining Hogs and Dogs', bbox={'facecolor': '0.8', 'pad': 5})
-    # save_plot(plt, 'example')
-    arr = np.array([[1,2],[3,4]])
-    save_array(arr, 'example')
+    
+    avgScores = ([[1, 2, 3, 4], [100, 110, 340, 560], '0.2'],
+                [[1, 2, 3, 4], [140, 400, 410, 450], '0.4'])
+    plt = make_plot('Varying mutation rate', 'generations', 'avg score')
+    add_lines(plt, avgScores)
+    save_plot(plt, 'exampleavgscore')
