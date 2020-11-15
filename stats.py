@@ -24,10 +24,10 @@ def fetch_generation_stats(strategies):
 
     # Construct.
     d = {
-        "max" : maxx,
-        "min" : minn,
-        "avg" : avg,
-        "std" : std
+        "Max" : maxx,
+        "Min" : minn,
+        "Average" : avg,
+        "Standard Deviation" : std
     }
 
     # Ret.
@@ -58,30 +58,31 @@ def make_plot(title, xaxis, yaxis):
     plt.addlines(asdf)
     stats.save_plot(plt, path)
     """
-    figure(1, figsize=(16, 9))
-    plt.title(title)
-    plt.xlabel(xaxis)
-    plt.ylabel(yaxis)
-    return plt
+    fig, ax1 = plt.subplots()
+    fig.set_size_inches(16,9)
+    ax1.set_title(title)
+    ax1.set_xlabel(xaxis)
+    ax1.set_ylabel(yaxis)
+    return fig, ax1
 
 
 
-def add_lines(plt, compiled_results):
+def add_lines(fig, ax1, compiled_results):
     """
     Compiled results is tuple with
     [([Xs], [Ys], label)]
     """
     for x, y, label in compiled_results:
-        plt.plot(x, y,  alpha=0.9, label=label)
+        ax1.plot(x, y, alpha=0.9, label=label)
 
-    plt.legend(loc=2, ncol=len(compiled_results))
-    return plt
+    fig.legend(loc='upper right', ncol=1)
+    return ax1
 
 if __name__ == '__main__':
 
     
     avgScores = ([[1, 2, 3, 4], [100, 110, 340, 560], '0.2'],
                 [[1, 2, 3, 4], [140, 400, 410, 450], '0.4'])
-    plt = make_plot('Varying mutation rate', 'generations', 'avg score')
-    add_lines(plt, avgScores)
-    save_plot(plt, 'exampleavgscore')
+    fig, ax = make_plot('Varying mutation rate', 'generations', 'avg score')
+    add_lines(fig, ax, avgScores)
+    save_plot(fig, 'exampleavgscore')

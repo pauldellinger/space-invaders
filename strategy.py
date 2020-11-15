@@ -7,7 +7,7 @@ import pickle
 import os.path
 
 MUTATE_PROBABILITY = 1 # (out of 100)
-NUM_PIXELS = 7896
+# NUM_PIXELS = 7896
 NUM_MOVES = 6
 
 class Strategy(object):
@@ -15,11 +15,13 @@ class Strategy(object):
                  w0 = None, 
                  b0 = None,
                  MUTATE_PROBABILITY=0.01,
-                 MUTATION_FACTOR=2
+                 MUTATION_FACTOR=2,
+                 NUM_PIXELS=7896
                  ):
         # Initialize weights and bias for layer one (normal distribution in [-1, 1))
+        self.NUM_PIXELS = NUM_PIXELS
         if(w0 is None and b0 is None):
-            self.w0 = 2 * np.random.rand(NUM_PIXELS, NUM_MOVES) - 1
+            self.w0 = 2 * np.random.rand(self.NUM_PIXELS, NUM_MOVES) - 1
             self.b0 = 2 * np.random.rand(NUM_MOVES) - 1
         else: 
             self.w0 = w0
@@ -29,6 +31,8 @@ class Strategy(object):
     
     # Convert image to black and white and reduce size to make computation faster
     def preprocessImage(self, pixelInput):
+        if (len(pixelInput.flatten()) == 128):
+            return pixelInput
         observation = cv2.cvtColor(cv2.resize(pixelInput, (84, 110)), cv2.COLOR_BGR2GRAY)
         observation = observation[16:110,:]
         ret, observation = cv2.threshold(observation,1,255,cv2.THRESH_BINARY)
@@ -45,7 +49,7 @@ class Strategy(object):
         return np.argmax(output)
 
     def mutate(self):
-        for i in range(0, NUM_PIXELS):
+        for i in range(0, self.NUM_PIXELS):
             for j in range(0, NUM_MOVES):
                 if(np.random.rand() <= self.MUTATE_PROBABILITY):
                     self.w0[i][j] += randint(-self.MUTATION_FACTOR, self.MUTATION_FACTOR)
@@ -54,9 +58,9 @@ class Strategy(object):
                 self.b0[i] += randint(-self.MUTATION_FACTOR, self.MUTATION_FACTOR)
     
     def breed(self, other):
-        newWeights = np.empty([NUM_PIXELS, NUM_MOVES])
+        newWeights = np.empty([self.NUM_PIXELS, NUM_MOVES])
         newBias = np.empty([NUM_MOVES])
-        for i in range(0, NUM_PIXELS):
+        for i in range(0, self.NUM_PIXELS):
             for j in range(0, NUM_MOVES):
                 if(randint(1, 2) == 1):
                     newWeights[i][j] = self.w0[i][j]

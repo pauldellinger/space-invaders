@@ -22,11 +22,11 @@ class geneticAlgorithm(object):
         self.SELECTIVITY = SELECTIVITY
         self.EPISODES = EPISODES
         self.MUTATION_RATE = MUTATION_RATE
+        self.env = gym.make(GAME)
+        self.env.reset()
         self.strategies = []
         for i in range(0, NUM_STRATEGIES):
             self.strategies.append(Strategy(MUTATE_PROBABILITY=MUTATION_RATE))
-        self.env = gym.make(GAME)
-        self.env.reset()
         self.start_time = datetime.now()
         self.folder = os.path.join('strategies', self.start_time.strftime("%Y%m%d-%H%M%S"))
         os.mkdir(self.folder)
@@ -114,9 +114,16 @@ class geneticAlgorithm(object):
             allSimStats.append(stats)
         
         # Build.
-        varLst = [i[variable=="Selectivity"] for i in paramList]
+
+
+        # Possible parameters to test
+        params = ("Mutation Rate", "Selectivity")
+        #Find the parameter we're varying
+        param = params.index(variable)
+
+        varLst = [i[param] for i in paramList]
         legendLabels = list(map(lambda x: variable + "=" + str(x), varLst))
-        for stat in ('avg', 'max'):
+        for stat in ('Average', 'Max'):
             Ys = []
             Xs = []
             for i in range(len(allSimStats)):
@@ -128,16 +135,16 @@ class geneticAlgorithm(object):
                 
                 "Xs": Xs,
                 "Ys":Ys,
-                "title" : variable + "'s effect on " + stat + "score",
+                "title" : variable + "'s effect on " + stat + " core",
                 "xLabel" : "Generation",
-                "yLabel" : stat + "Score",
+                "yLabel" : stat + " Score",
                 "n" : len(allSimStats),
                 "legendLabels" : legendLabels
             }
-            plt = make_plot(d['title'], d['xLabel'], d['yLabel'])
+            fig, ax1 = make_plot(d['title'], d['xLabel'], d['yLabel'])
             compiled_results = list(zip(d['Xs'], d['Ys'], d['legendLabels']))
-            add_lines(plt, compiled_results)
-            save_plot(plt, stat + variable + self.start_time.strftime("%Y%m%d-%H%M%S"))
+            add_lines(fig, ax1, compiled_results)
+            save_plot(fig, stat + variable + self.start_time.strftime("%Y%m%d-%H%M%S"))
             
         
         # Ret.
@@ -161,7 +168,7 @@ class geneticAlgorithm(object):
 
 
 if __name__ == '__main__':
-    simulation = geneticAlgorithm(10, 2)
+    simulation = geneticAlgorithm(3, 2, GAME='SpaceInvaders-v0')
 
     ####################
     # Single Mode.
@@ -173,16 +180,16 @@ if __name__ == '__main__':
     #### Many Mode.
     ####################
     paramList = [
-        [0.01, 0.05],
-        [0.01, 0.10],
-        # [0.01, 0.15],
-        # [0.01, 0.20],
-        # [0.01, 0.25],
-        # [0.01, 0.30],
-        # [0.01, 0.35],
-        # [0.01, 0.40],
-        # [0.01, 0.45],
-        # [0.01, 0.5]
+        [0.01, 0.25],
+        [0.02, 0.25],
+        [0.03, 0.25],
+        [0.04, 0.25],
+        [0.05, 0.25],
+        [0.06, 0.25],
+        [0.07, 0.25],
+        [0.08, 0.25],
+        [0.09, 0.25],
+        [0.10, 0.25]
     ]
     simulation.run_simulations_with_params(paramList, variable="Selectivity")
     
