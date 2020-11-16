@@ -241,7 +241,7 @@ if __name__ == '__main__':
     simulation.run_simulations_with_params(paramList, variable="Mutation Factor")
     """
 
-    
+    """
     # Paul's Parameters:
     paramList = [
         [0.01, 0.25, 2, 10],
@@ -256,6 +256,7 @@ if __name__ == '__main__':
         [0.01, 0.25, 2, 100]
     ]
     simulation.run_simulations_with_params(paramList, variable="Population Size")
+    """
     
     
 
