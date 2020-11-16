@@ -73,7 +73,11 @@ class Strategy(object):
             else:
                 newBias[i] = other.b0[i]
         # newBias = (self.b0 + other.b0) / 2.0
-        return Strategy(newWeights, newBias)
+        return Strategy(newWeights, 
+                        newBias, 
+                        MUTATE_PROBABILITY=self.MUTATE_PROBABILITY,
+                        MUTATION_FACTOR=self.MUTATION_FACTOR,
+                        NUM_PIXELS=self.NUM_PIXELS)
 
     def export(self, score, path):
         pickle.dump(self, open(os.path.join(path, score + '.p'), "wb"))

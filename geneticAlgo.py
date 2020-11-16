@@ -32,18 +32,26 @@ class geneticAlgorithm(object):
         os.mkdir(self.folder)
     
     def evaluateScore(self, strategy):
-        scores = []
-        for _ in range(self.EPISODES):
+        observation = np.array(self.env.reset())
+        self.env.seed(0)
+        score = 0
+        while True:
+            observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
+            score += reward
+            if(done):
+                return score
+        # scores = []
+        # for _ in range(self.EPISODES):
 
-            observation = np.array(self.env.reset())
-            score = 0
-            while True:
-                observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
-                score += reward
-                if(done):
-                    scores.append(score)
-                    break
-        return (sum(scores)/len(scores))
+        #     observation = np.array(self.env.reset())
+        #     score = 0
+        #     while True:
+        #         observation, reward, done, info = self.env.step(strategy.calculateMove(observation))
+        #         score += reward
+        #         if(done):
+        #             scores.append(score)
+        #             break
+        # return (sum(scores)/len(scores))
     
     def startSimulation(self):
         results = []
@@ -90,10 +98,12 @@ class geneticAlgorithm(object):
 
         # Each sim.
         for specs in paramList:
+            self.NUM_STRATEGIES = specs[3]
             self.SELECTIVITY = specs[1]                     # Set Selectivity.
             self.strategies = []                            # Clear.
-            for i in range(0, self.NUM_STRATEGIES):
-                s = Strategy(MUTATE_PROBABILITY=specs[0])   # Set Mutability.
+            for i in range(0, specs[3]):
+                s = Strategy(MUTATE_PROBABILITY=specs[0],
+                             MUTATION_FACTOR=specs[2])   # Set Mutability and Mutation Factor.
                 self.strategies.append(s)
             
             # Run.
@@ -117,7 +127,7 @@ class geneticAlgorithm(object):
 
 
         # Possible parameters to test
-        params = ("Mutation Rate", "Selectivity")
+        params = ("Mutation Rate", "Selectivity", 'Mutation Factor', 'Population Size')
         #Find the parameter we're varying
         param = params.index(variable)
 
@@ -135,7 +145,7 @@ class geneticAlgorithm(object):
                 
                 "Xs": Xs,
                 "Ys":Ys,
-                "title" : variable + "'s effect on " + stat + " core",
+                "title" : variable + "'s effect on " + stat + " Score",
                 "xLabel" : "Generation",
                 "yLabel" : stat + " Score",
                 "n" : len(allSimStats),
@@ -179,19 +189,76 @@ if __name__ == '__main__':
     ####################
     #### Many Mode.
     ####################
+
+    """
+    # Roy's Parameters:
     paramList = [
-        [0.01, 0.25],
-        [0.02, 0.25],
-        [0.03, 0.25],
-        [0.04, 0.25],
-        [0.05, 0.25],
-        [0.06, 0.25],
-        [0.07, 0.25],
-        [0.08, 0.25],
-        [0.09, 0.25],
-        [0.10, 0.25]
+        [0.01, 0.25, 2, 50],
+        [0.02, 0.25, 2, 50],
+        [0.03, 0.25, 2, 50],
+        [0.04, 0.25, 2, 50],
+        [0.05, 0.25, 2, 50],
+        [0.06, 0.25, 2, 50],
+        [0.07, 0.25, 2, 50],
+        [0.08, 0.25, 2, 50],
+        [0.09, 0.25, 2, 50],
+        [0.10, 0.25, 2, 50]
+    ]
+    simulation.run_simulations_with_params(paramList, variable="Mutation Rate")
+    """
+
+    """
+    # Davis's Parameters:
+    paramList = [
+        [0.01, 0.05, 2, 50],
+        [0.01, 0.10, 2, 50],
+        [0.01, 0.15, 2, 50],
+        [0.01, 0.20, 2, 50],
+        [0.01, 0.25, 2, 50],
+        [0.01, 0.30, 2, 50],
+        [0.01, 0.35, 2, 50],
+        [0.01, 0.40, 2, 50],
+        [0.01, 0.45, 2, 50],
+        [0.01, 0.50, 2, 50]
     ]
     simulation.run_simulations_with_params(paramList, variable="Selectivity")
+    """
+
+    """
+    # Henry's Parameters:
+    paramList = [
+        [0.01, 0.25, 1, 50],
+        [0.01, 0.25, 2, 50],
+        [0.01, 0.25, 3, 50],
+        [0.01, 0.25, 4, 50],
+        [0.01, 0.25, 5, 50],
+        [0.01, 0.25, 6, 50],
+        [0.01, 0.25, 7, 50],
+        [0.01, 0.25, 8, 50],
+        [0.01, 0.25, 9, 50],
+        [0.01, 0.25, 10, 50]
+    ]
+    simulation.run_simulations_with_params(paramList, variable="Mutation Factor")
+    """
+
+    
+    # Paul's Parameters:
+    paramList = [
+        [0.01, 0.25, 2, 10],
+        [0.01, 0.25, 2, 20],
+        [0.01, 0.25, 2, 30],
+        [0.01, 0.25, 2, 40]
+        [0.01, 0.25, 2, 50],
+        [0.01, 0.25, 2, 60],
+        [0.01, 0.25, 2, 70],
+        [0.01, 0.25, 2, 80],
+        [0.01, 0.25, 2, 90],
+        [0.01, 0.25, 2, 100]
+    ]
+    simulation.run_simulations_with_params(paramList, variable="Population Size")
+    
+    
+
     
 
     

@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 env = gym.make('SpaceInvaders-v0')
+env.seed(0)
 env.reset()
 print(np.array(env.reset()).flatten())
 print(env.action_space)
