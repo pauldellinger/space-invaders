@@ -55,7 +55,7 @@ class geneticAlgorithm(object):
     
     def startSimulation(self):
         results = []
-        for i in range(1, self.NUM_GENERATIONS):
+        for i in range(0, self.NUM_GENERATIONS):
             print("GENERATION: " + str(i))
             scores = []
             sumScores = 0
