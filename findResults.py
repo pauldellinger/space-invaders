@@ -6,8 +6,17 @@ from datetime import datetime
 
 
 paths = (
+
+    'strategies/20201117-173256/[0.1, 0.25, 2, 50]/[0.1, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.01, 0.25, 2, 50]/[0.01, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.02, 0.25, 2, 50]/[0.02, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.03, 0.25, 2, 50]/[0.03, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.04, 0.25, 2, 50]/[0.04, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.05, 0.25, 2, 50]/[0.05, 0.25, 2, 50]-sim-results',
+    'strategies/roy_strategies/[0.06, 0.25, 2, 50]/[0.06, 0.25, 2, 50]-sim-results',
     'strategies/20201117-135235/[0.07, 0.25, 2, 50]/[0.07, 0.25, 2, 50]-sim-results',
-    'strategies/20201117-173256/[0.08, 0.25, 2, 50]/[0.08, 0.25, 2, 50]-sim-results'
+    'strategies/20201117-173256/[0.08, 0.25, 2, 50]/[0.08, 0.25, 2, 50]-sim-results',
+    'strategies/20201117-173256/[0.09, 0.25, 2, 50]/[0.09, 0.25, 2, 50]-sim-results',
 )
 variable ='Mutation Rate'
 

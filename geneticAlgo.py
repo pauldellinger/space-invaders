@@ -178,7 +178,7 @@ class geneticAlgorithm(object):
 
 
 if __name__ == '__main__':
-    simulation = geneticAlgorithm(3, 2, GAME='SpaceInvaders-v0')
+    simulation = geneticAlgorithm(100, 50, GAME='SpaceInvaders-v0')
 
     ####################
     # Single Mode.
@@ -190,22 +190,21 @@ if __name__ == '__main__':
     #### Many Mode.
     ####################
 
-    """
+
     # Roy's Parameters:
     paramList = [
-        [0.01, 0.25, 2, 50],
-        [0.02, 0.25, 2, 50],
-        [0.03, 0.25, 2, 50],
-        [0.04, 0.25, 2, 50],
-        [0.05, 0.25, 2, 50],
-        [0.06, 0.25, 2, 50],
-        [0.07, 0.25, 2, 50],
+        # [0.01, 0.25, 2, 50],
+        # [0.02, 0.25, 2, 50],
+        # [0.03, 0.25, 2, 50],
+        # [0.04, 0.25, 2, 50],
+        # [0.05, 0.25, 2, 50],
+        # [0.06, 0.25, 2, 50],
+        # [0.07, 0.25, 2, 50],
         [0.08, 0.25, 2, 50],
         [0.09, 0.25, 2, 50],
         [0.10, 0.25, 2, 50]
     ]
     simulation.run_simulations_with_params(paramList, variable="Mutation Rate")
-    """
 
     """
     # Davis's Parameters:
@@ -241,22 +240,22 @@ if __name__ == '__main__':
     simulation.run_simulations_with_params(paramList, variable="Mutation Factor")
     """
 
-    """
+
     # Paul's Parameters:
-    paramList = [
-        [0.01, 0.25, 2, 10],
-        [0.01, 0.25, 2, 20],
-        [0.01, 0.25, 2, 30],
-        [0.01, 0.25, 2, 40]
-        [0.01, 0.25, 2, 50],
-        [0.01, 0.25, 2, 60],
-        [0.01, 0.25, 2, 70],
-        [0.01, 0.25, 2, 80],
-        [0.01, 0.25, 2, 90],
-        [0.01, 0.25, 2, 100]
-    ]
-    simulation.run_simulations_with_params(paramList, variable="Population Size")
-    """
+    # paramList = [
+    #     [0.05, 0.25, 2, 10]
+    #     # [0.01, 0.25, 2, 20],
+    #     # [0.01, 0.25, 2, 30],
+    #     # [0.01, 0.25, 2, 40],
+    #     # [0.01, 0.25, 2, 50],
+    #     # [0.01, 0.25, 2, 60],
+    #     # [0.01, 0.25, 2, 70],
+    #     # [0.01, 0.25, 2, 80],
+    #     # [0.01, 0.25, 2, 90],
+    #     # [0.01, 0.25, 2, 100]
+    # ]
+    # simulation.run_simulations_with_params(paramList, variable="Population Size")
+
     
     
 
